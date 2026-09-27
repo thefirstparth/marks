@@ -1,0 +1,18 @@
+{
+  "name": "marks",
+  "private": true,
+  "type": "module",
+  "description": "A library of logos, flags, club crests and faces, with an index any site can read.",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "names": "node scripts/names.mjs",
+    "missing": "node scripts/missing.mjs"
+  },
+  "devDependencies": {
+    "jpeg-js": "^0.4.4",
+    "picojs": "^1.0.0",
+    "pngjs": "^7.0.0",
+    "svgo": "^3.3.5"
+  }
+}
