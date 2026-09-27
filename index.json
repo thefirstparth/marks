@@ -7,7 +7,7 @@
   "flag": 265,
   "club": 494,
   "team": 10,
-  "person": 75
+  "person": 81
  },
  "names": {
   "1 fc union berlin": "clubs/1-fc-union-berlin",
@@ -233,6 +233,7 @@
   "belize": "flags/bz",
   "ben johnson": "flags/us",
   "ben shelton": "people/ben-shelton",
+  "ben stokes": "people/ben-stokes",
   "benfica": "clubs/benfica",
   "bengaluru fc": "clubs/bengaluru-fc",
   "bengaluru": "clubs/bengaluru-fc",
@@ -858,6 +859,7 @@
   "igor thiago": "flags/br",
   "ik sirius": "clubs/ik-sirius",
   "ik start": "clubs/ik-start",
+  "iliana iotova": "people/iliana-iotova",
   "ilie bolojan": "flags/ro",
   "ime udoka": "flags/us",
   "immanuel quickley": "flags/us",
@@ -954,6 +956,7 @@
   "jeff bezos": "flags/us",
   "jelena ostapenko": "flags/lv",
   "jenna dewan": "people/jenna-dewan",
+  "jensen huang": "people/jensen-huang",
   "jenson brooksby": "flags/us",
   "jeremiah fears": "flags/us",
   "jeremy allen white": "flags/fr",
@@ -1171,6 +1174,7 @@
   "luis enrique": "flags/es",
   "luis fernando camacho": "flags/bo",
   "luis montenegro": "flags/pt",
+  "luiz inacio lula da silva": "people/luiz-inacio-lula-da-silva",
   "luka modric": "flags/hr",
   "luke browning": "flags/gb",
   "luke combs": "flags/us",
@@ -1347,6 +1351,7 @@
   "namibia": "flags/na",
   "naomi osaka": "flags/jp",
   "napoli": "clubs/napoli",
+  "narendra modi": "people/narendra-modi",
   "nashville sc": "clubs/nashville-sc",
   "nashville": "clubs/nashville-sc",
   "nauru": "flags/nr",
@@ -1787,6 +1792,7 @@
   "sturm graz": "clubs/sk-sturm-graz",
   "stuttgart": "clubs/vfb-stuttgart",
   "sudan": "flags/sd",
+  "sundar pichai": "people/sundar-pichai",
   "sunderland": "clubs/sunderland",
   "sunrisers hyderabad": "teams/sunrisers-hyderabad",
   "suns": "clubs/phoenix-suns",
@@ -11139,6 +11145,18 @@
    "checked": "2026-09-27",
    "hash": "a784c989"
   },
+  "people/ben-stokes": {
+   "kind": "person",
+   "style": "face",
+   "file": "people/ben-stokes.jpg",
+   "name": "Ben Stokes",
+   "from": "https://commons.wikimedia.org/wiki/File:3_14_Captain_Ben_(cropped)_(cropped).jpg",
+   "licence": "Public domain, Dave Morton",
+   "taken": "2025-09-26",
+   "fetched": "2026-09-27",
+   "checked": "2026-09-27",
+   "hash": "49b21075"
+  },
   "people/carlo-ancelotti": {
    "kind": "person",
    "style": "face",
@@ -11274,6 +11292,12 @@
    "fetched": "2026-09-27",
    "checked": "2026-09-27",
    "hash": "dac41fa4"
+  },
+  "people/diego-simeone": {
+   "kind": "person",
+   "style": "none",
+   "file": "",
+   "checked": "2026-09-27"
   },
   "people/elena-rybakina": {
    "kind": "person",
@@ -11468,6 +11492,18 @@
    "file": "",
    "checked": "2026-09-27"
   },
+  "people/iliana-iotova": {
+   "kind": "person",
+   "style": "face",
+   "file": "people/iliana-iotova.jpg",
+   "name": "Iliana Iotova",
+   "from": "https://commons.wikimedia.org/wiki/File:President_Iliyana_Yotova_(3x4_cropped).jpg",
+   "licence": "CC BY 2.5 bg, Unknown authorUnknown author",
+   "taken": "2026-01-23",
+   "fetched": "2026-09-27",
+   "checked": "2026-09-27",
+   "hash": "df654e05"
+  },
   "people/isack-hadjar": {
    "kind": "person",
    "style": "face",
@@ -11515,6 +11551,18 @@
    "checked": "2026-09-27",
    "hash": "2f0aa556"
   },
+  "people/jensen-huang": {
+   "kind": "person",
+   "style": "face",
+   "file": "people/jensen-huang.jpg",
+   "name": "Jensen Huang",
+   "from": "https://commons.wikimedia.org/wiki/File:Jen-Hsun_Huang_2025.jpg",
+   "licence": "Public domain, The White House",
+   "taken": "2025-11-18",
+   "fetched": "2026-09-27",
+   "checked": "2026-09-27",
+   "hash": "c9f92a98"
+  },
   "people/jessica-pegula": {
    "kind": "person",
    "style": "face",
@@ -11545,6 +11593,12 @@
    "file": "",
    "checked": "2026-09-27"
   },
+  "people/joe-root": {
+   "kind": "person",
+   "style": "none",
+   "file": "",
+   "checked": "2026-09-27"
+  },
   "people/jude-bellingham": {
    "kind": "person",
    "style": "face",
@@ -11569,6 +11623,12 @@
    "hash": "8e46343e"
   },
   "people/kl-rahul": {
+   "kind": "person",
+   "style": "none",
+   "file": "",
+   "checked": "2026-09-27"
+  },
+  "people/kostadin-kostadinov": {
    "kind": "person",
    "style": "none",
    "file": "",
@@ -11696,6 +11756,18 @@
    "file": "",
    "checked": "2026-09-27"
   },
+  "people/luiz-inacio-lula-da-silva": {
+   "kind": "person",
+   "style": "face",
+   "file": "people/luiz-inacio-lula-da-silva.jpg",
+   "name": "Luiz Inacio Lula Da Silva",
+   "from": "https://commons.wikimedia.org/wiki/File:Brazilian_President_Luiz_Inacio_Lula_da_Silva_visits_the_INTERPOL_headquarters_in_Lyon.jpg",
+   "licence": "CC BY-SA 2.5, INTERPOL",
+   "taken": "2025-06-09",
+   "fetched": "2026-09-27",
+   "checked": "2026-09-27",
+   "hash": "b13177a0"
+  },
   "people/madison-keys": {
    "kind": "person",
    "style": "none",
@@ -11766,6 +11838,18 @@
    "style": "none",
    "file": "",
    "checked": "2026-09-27"
+  },
+  "people/narendra-modi": {
+   "kind": "person",
+   "style": "face",
+   "file": "people/narendra-modi.jpg",
+   "name": "Narendra Modi",
+   "from": "https://commons.wikimedia.org/wiki/File:Narendra_Modi_Portrait_2026.jpg",
+   "licence": "GODL-India, Prime Minister's Office",
+   "taken": "2026-08-20",
+   "fetched": "2026-09-27",
+   "checked": "2026-09-27",
+   "hash": "e0be1169"
   },
   "people/nico-hulkenberg": {
    "kind": "person",
@@ -11991,6 +12075,12 @@
    "checked": "2026-09-27",
    "hash": "39b2f6a6"
   },
+  "people/salman-khan": {
+   "kind": "person",
+   "style": "none",
+   "file": "",
+   "checked": "2026-09-27"
+  },
   "people/sam-altman": {
    "kind": "person",
    "style": "face",
@@ -12002,6 +12092,12 @@
    "fetched": "2026-09-27",
    "checked": "2026-09-27",
    "hash": "fb1d8861"
+  },
+  "people/satya-nadella": {
+   "kind": "person",
+   "style": "none",
+   "file": "",
+   "checked": "2026-09-27"
   },
   "people/sergio-perez": {
    "kind": "person",
@@ -12061,6 +12157,18 @@
    "file": "",
    "checked": "2026-09-27"
   },
+  "people/sundar-pichai": {
+   "kind": "person",
+   "style": "face",
+   "file": "people/sundar-pichai.jpg",
+   "name": "Sundar Pichai",
+   "from": "https://commons.wikimedia.org/wiki/File:Sundar_Pichai_at_Google_Campus_-_20260528_(EP-206032A)_(cropped)_(cropped).jpg",
+   "licence": "European Parliament, Amy Osborne / European Union",
+   "taken": "2026-05-28",
+   "fetched": "2026-09-27",
+   "checked": "2026-09-27",
+   "hash": "19387347"
+  },
   "people/suryakumar-yadav": {
    "kind": "person",
    "style": "none",
@@ -12104,6 +12212,12 @@
    "checked": "2026-09-27"
   },
   "people/travis-head": {
+   "kind": "person",
+   "style": "none",
+   "file": "",
+   "checked": "2026-09-27"
+  },
+  "people/troye-sivan": {
    "kind": "person",
    "style": "none",
    "file": "",

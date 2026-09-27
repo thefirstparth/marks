@@ -56,7 +56,7 @@ const COUNTRIES = {}, region = new Intl.DisplayNames(["en"], { type: "region" })
 for (let a = 65; a <= 90; a++) for (let b = 65; b <= 90; b++) { const code = String.fromCharCode(a, b), n = region.of(code); if (n && n !== code) COUNTRIES[n] = code.toLowerCase(); }
 Object.assign(COUNTRIES, clean(C.countries));
 const PEOPLE = { ...PEOPLE_FILE.people, ...clean(C.people) };
-const flagCodes = new Set([...Object.values(COUNTRIES), ...Object.values(PEOPLE)]);
+const flagCodes = new Set([...Object.values(COUNTRIES), ...Object.values(PEOPLE)].filter(Boolean)); // "" = no clear nationality: no flag
 const drawn = await iconify([...Object.values(brandIds), ...Object.values(compIds), ...[...flagCodes].map(c => `circle-flags:${c}`)]);
 for (const [name, icon] of Object.entries(brandIds)) { const svg = drawn[icon]; if (!svg) { missing.push(icon); continue; }
   const id = `brands/${slug(icon.split(":")[1])}`, file = `${id}.svg`; mkdirSync("brands", { recursive: true }); writeFileSync(file, svg);

@@ -1,5 +1,5 @@
 {
- "$comment": "Made by scripts/names.mjs from the names bet on at Polymarket and Kalshi, the F1 grid and the ATP/WTA top 150, checked on Wikidata. Name → the flag they play under or belong to. Safe to edit by hand; config/sources.json \"people\" wins over it. scripts/build.mjs then fetches their marks.",
+ "$comment": "Made by scripts/names.mjs from the names bet on at Polymarket and Kalshi, the F1 grid and the ATP/WTA top 150, checked on Wikidata. Name → the flag they play under or belong to. Safe to edit by hand; config/sources.json \"people\" wins over it. scripts/build.mjs then fetches their marks. An empty flag means their nationality is not clear-cut (several, none preferred): face only, no flag.",
  "made": "2026-09-27",
  "seed": [
   "Narendra Modi",
@@ -957,6 +957,19 @@
   "madonna": "us",
   "pinkpantheress": "gb",
   "raye": "gb",
-  "ella langley": "us"
+  "ella langley": "us",
+  "narendra modi": "",
+  "joe root": "",
+  "ben stokes": "",
+  "salman khan": "",
+  "sundar pichai": "",
+  "satya nadella": "",
+  "jensen huang": "",
+  "diego simeone": "",
+  "erling haaland": "",
+  "iliana iotova": "",
+  "kostadin kostadinov": "",
+  "luiz inacio lula da silva": "",
+  "troye sivan": ""
  }
 }
