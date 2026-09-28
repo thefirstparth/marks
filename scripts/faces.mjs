@@ -1,5 +1,6 @@
 // Faces for scripts/logos.mjs: a photo from 2025 or later, cropped square around the face (found by pico, a small
-// face detector) and saved as a 96px JPEG. Sources, newest first: ESPN's headshot if ESPN updated it in 2025 or later,
+// face detector) and saved as a 96px JPEG. Sources, in order: ESPN's headshot if ESPN updated it in 2025 or later, the
+// IPL's current squad photo,
 // else Wikipedia's lead photo if taken in 2025 or later, else the newest cropped portrait on Wikimedia Commons taken in
 // 2025 or later, else any photo of them from 2025 or later with exactly one clear face. No such photo, or no face found in it: no face (the person keeps the flag they play under).
 import { createRequire } from "node:module";
@@ -92,13 +93,21 @@ async function fileInfo(files) {
 }
 
 // people: [{ key, name, espn }] (espn = headshot URL or ""). Returns { key: { jpg, credit } }.
+// Each person gets a fixed budget, so a hard case never holds a run up: at most 8 photos tried, and at most 45 seconds
+// spent fetching and checking them, across all sources. Then they keep their flag until the next recheck.
+const BUDGET = { photos: 8, ms: 45000 };
 export async function faces(people, log = () => {}) {
-  const out = {};
-  // 1. ESPN, if updated in 2025 or later.
+  const out = {}, spent = {};
+  const attempt = async (p, url, alone = false) => {
+    const s = (spent[p.key] ||= { photos: 0, ms: 0 }); if (out[p.key] || s.photos >= BUDGET.photos || s.ms >= BUDGET.ms) return null;
+    const t = Date.now(); s.photos++; const jpg = await tryPhoto(url, alone).catch(() => null); s.ms += Date.now() - t; return jpg;
+  };
+  const recent = t => t >= SINCE && t <= Date.now(); // taken in 2025 or later, and not "in the future" (a wrong date)
+  // 1. Official current headshots: ESPN if updated in 2025 or later; the IPL's current season squad photo.
   for (const p of people) {
-    if (!p.espn) continue;
-    const h = await fetch(p.espn, { method: "HEAD", headers: UA }).catch(() => null), lm = Date.parse(h?.headers.get("last-modified") || "");
-    if (lm >= SINCE) { const jpg = await tryPhoto(p.espn + "?w=350"); if (jpg) out[p.key] = { jpg, credit: null }; }
+    if (p.espn) { const h = await fetch(p.espn, { method: "HEAD", headers: UA }).catch(() => null), lm = Date.parse(h?.headers.get("last-modified") || "");
+      if (recent(lm)) { const jpg = await attempt(p, p.espn + "?w=350"); if (jpg) out[p.key] = { jpg, credit: null, source: "ESPN" }; } }
+    if (!out[p.key] && p.ipl) { const jpg = await attempt(p, p.ipl); if (jpg) out[p.key] = { jpg, credit: null, source: "IPL squad" }; }
   }
   // 2. Wikipedia's lead photo, if taken in 2025 or later.
   const rest = people.filter(p => !out[p.key]);
@@ -110,31 +119,22 @@ export async function faces(people, log = () => {}) {
     const lead = {}; for (const pg of Object.values(j.query?.pages || {})) if (pg.pageimage) lead[byTitle[pg.title] || pg.title] = pg.pageimage;
     const info = await fileInfo(Object.values(lead));
     for (const p of part) { const f = lead[p.name], fi = f && info[f.replace(/_/g, " ")];
-      if (fi?.taken >= SINCE) { const jpg = await tryPhoto(fi.thumb); if (jpg) out[p.key] = { jpg, credit: { ...fi, file: f } }; } }
+      if (recent(fi?.taken)) { const jpg = await attempt(p, fi.thumb); if (jpg) out[p.key] = { jpg, credit: { ...fi, file: f }, source: "Wikipedia" }; } }
     await wait(1500);
   }
-  // 3. The newest cropped portrait on Commons, taken in 2025 or later.
-  for (const p of people.filter(p => !out[p.key])) {
-    await wait(1500);
-    const q = new URLSearchParams({ action: "query", format: "json", list: "search", srnamespace: "6", srlimit: "12", srsort: "create_timestamp_desc", srsearch: `intitle:"${p.name}" intitle:cropped filetype:bitmap` });
-    const r = await get("https://commons.wikimedia.org/w/api.php?" + q), j = r ? await r.json() : {};
-    const files = (j.query?.search || []).map(s => s.title.replace(/^File:/, ""));
-    const info = await fileInfo(files);
-    for (const f of files.filter(f => info[f]?.taken >= SINCE).sort((a, b) => info[b].taken - info[a].taken).slice(0, 6)) {
-      const jpg = await tryPhoto(info[f].thumb); if (jpg) { out[p.key] = { jpg, credit: { ...info[f], file: f } }; break; }
+  // 3. Commons: the newest cropped portraits, then any photo with exactly one clear, large face; newest first.
+  for (const [query, alone] of [["intitle:cropped filetype:bitmap", false], ["filetype:bitmap", true]])
+    for (const p of people.filter(p => !out[p.key] && (spent[p.key]?.photos || 0) < BUDGET.photos)) {
+      await wait(1500);
+      const q = new URLSearchParams({ action: "query", format: "json", list: "search", srnamespace: "6", srlimit: "20", srsort: "create_timestamp_desc", srsearch: `intitle:"${p.name}" ${query}` });
+      const r = await get("https://commons.wikimedia.org/w/api.php?" + q), j = r ? await r.json() : {};
+      const files = (j.query?.search || []).map(s => s.title.replace(/^File:/, ""));
+      const info = await fileInfo(files);
+      for (const f of files.filter(f => recent(info[f]?.taken)).sort((a, b) => info[b].taken - info[a].taken)) {
+        const jpg = await attempt(p, info[f].thumb, alone); if (jpg) { out[p.key] = { jpg, credit: { ...info[f], file: f }, source: "Wikimedia" }; break; }
+        if ((spent[p.key]?.photos || 0) >= BUDGET.photos) break;
+      }
     }
-  }
-  // 4. Any photo of them on Commons taken in 2025 or later with exactly one clear face in it (so never someone else).
-  for (const p of people.filter(p => !out[p.key])) {
-    await wait(1500);
-    const q = new URLSearchParams({ action: "query", format: "json", list: "search", srnamespace: "6", srlimit: "20", srsort: "create_timestamp_desc", srsearch: `intitle:"${p.name}" filetype:bitmap` });
-    const r = await get("https://commons.wikimedia.org/w/api.php?" + q), j = r ? await r.json() : {};
-    const files = (j.query?.search || []).map(s => s.title.replace(/^File:/, ""));
-    const info = await fileInfo(files);
-    for (const f of files.filter(f => info[f]?.taken >= SINCE).sort((a, b) => info[b].taken - info[a].taken).slice(0, 8)) {
-      const jpg = await tryPhoto(info[f].thumb, true); if (jpg) { out[p.key] = { jpg, credit: { ...info[f], file: f } }; break; }
-    }
-  }
-  for (const p of people) log(`${p.name}: ${out[p.key] ? (out[p.key].credit ? "Wikimedia " + new Date(out[p.key].credit.taken).getUTCFullYear() : "ESPN") : "no photo from 2025 on"}`);
+  for (const p of people) log(`${p.name}: ${out[p.key] ? `${out[p.key].source}${out[p.key].credit ? " " + new Date(out[p.key].credit.taken).getUTCFullYear() : ""}` : `none (${spent[p.key]?.photos || 0} photos tried)`}`);
   return out;
 }

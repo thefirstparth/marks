@@ -86,7 +86,11 @@
   "renault": "simple-icons:renault",
   "toyota": "simple-icons:toyota",
   "ford": "simple-icons:ford",
-  "porsche": "simple-icons:porsche"
+  "porsche": "simple-icons:porsche",
+  "whatsapp": "simple-icons:whatsapp",
+  "sony liv": "arcticons:sony-liv",
+  "sonyliv": "arcticons:sony-liv",
+  "zee5": "arcticons:zee5"
  },
  "competitions": {
   "$comment": "Shown in place of the subject's icon beside a gauge's label when the market is about this competition (matched in the market's title).",
@@ -111,7 +115,9 @@
   "usd": "material-symbols:attach-money-rounded",
   "spacex": "simple-icons:spacex",
   "starship": "simple-icons:spacex",
-  "nvidia": "simple-icons:nvidia"
+  "nvidia": "simple-icons:nvidia",
+  "kabaddi": "material-symbols:sports-kabaddi-rounded",
+  "upi": "material-symbols:upi-pay-rounded"
  },
  "crests": {
   "$comment": "Club crests from ESPN's team lists for these leagues, saved as small pictures in public/marks/ (a darker-background version too where ESPN has one). Names are the clubs' own (\"Real Madrid\", \"Golden State Warriors\"); NBA teams also answer to their city and nickname. Add a league by its ESPN code; add another name for a club under aliases.",
@@ -186,7 +192,8 @@
    "slavia prague": "Slavia Prague",
    "sparta prague": "Sparta Prague",
    "bodo glimt": "Bodo/Glimt"
-  }
+  },
+  "extra": {}
  },
  "custom": {
   "polymarket": {
@@ -282,85 +289,6 @@
    "for": "name",
    "famous": false
   },
-  "chennai super kings": {
-   "wiki": "Chennai Super Kings",
-   "style": "colour",
-   "for": "name",
-   "also": [
-    "csk"
-   ],
-   "kind": "team"
-  },
-  "mumbai indians": {
-   "wiki": "Mumbai Indians",
-   "style": "colour",
-   "for": "name",
-   "kind": "team"
-  },
-  "royal challengers bengaluru": {
-   "wiki": "Royal Challengers Bengaluru",
-   "style": "colour",
-   "for": "name",
-   "also": [
-    "royal challengers bangalore",
-    "rcb"
-   ],
-   "kind": "team"
-  },
-  "kolkata knight riders": {
-   "wiki": "Kolkata Knight Riders",
-   "style": "colour",
-   "for": "name",
-   "also": [
-    "kkr"
-   ],
-   "kind": "team"
-  },
-  "sunrisers hyderabad": {
-   "wiki": "Sunrisers Hyderabad",
-   "style": "colour",
-   "for": "name",
-   "also": [
-    "srh"
-   ],
-   "kind": "team"
-  },
-  "rajasthan royals": {
-   "wiki": "Rajasthan Royals",
-   "style": "colour",
-   "for": "name",
-   "kind": "team"
-  },
-  "delhi capitals": {
-   "wiki": "Delhi Capitals",
-   "style": "colour",
-   "for": "name",
-   "kind": "team"
-  },
-  "punjab kings": {
-   "wiki": "Punjab Kings",
-   "style": "colour",
-   "for": "name",
-   "also": [
-    "pbks"
-   ],
-   "kind": "team"
-  },
-  "gujarat titans": {
-   "wiki": "Gujarat Titans",
-   "style": "colour",
-   "for": "name",
-   "kind": "team"
-  },
-  "lucknow super giants": {
-   "wiki": "Lucknow Super Giants",
-   "style": "colour",
-   "for": "name",
-   "also": [
-    "lsg"
-   ],
-   "kind": "team"
-  },
   "haas": {
    "wiki": "Haas F1 Team",
    "style": "colour",
@@ -370,6 +298,106 @@
     "moneygram haas f1 team"
    ],
    "kind": "team"
+  },
+  "laver cup": {
+   "wiki": "Laver Cup",
+   "style": "colour",
+   "for": "competition"
+  },
+  "asian games": {
+   "wiki": "Asian Games",
+   "style": "colour",
+   "for": "competition"
+  },
+  "nations league": {
+   "wiki": "UEFA Nations League",
+   "style": "colour",
+   "for": "competition",
+   "also": [
+    "uefa nations league"
+   ]
+  },
+  "china open": {
+   "wiki": "China Open (tennis)",
+   "style": "colour",
+   "for": "competition"
+  },
+  "presidents cup": {
+   "wiki": "Presidents Cup",
+   "style": "colour",
+   "for": "competition"
+  },
+  "pro kabaddi": {
+   "wiki": "Pro Kabaddi League",
+   "style": "colour",
+   "for": "competition",
+   "also": [
+    "pro kabaddi league"
+   ]
+  },
+  "sensex": {
+   "wiki": "Bombay Stock Exchange",
+   "style": "colour",
+   "for": "competition",
+   "also": [
+    "bse",
+    "bse sensex"
+   ]
+  },
+  "nifty": {
+   "wiki": "National Stock Exchange of India",
+   "style": "colour",
+   "for": "competition",
+   "also": [
+    "nse",
+    "nifty 50"
+   ]
+  },
+  "s p 500": {
+   "wiki": "S&P Dow Jones Indices",
+   "style": "colour",
+   "for": "competition",
+   "also": [
+    "s&p 500",
+    "s&p"
+   ]
+  },
+  "election commission": {
+   "wiki": "Election Commission of India",
+   "style": "colour",
+   "for": "competition",
+   "also": [
+    "election commission of india"
+   ]
+  },
+  "supreme court": {
+   "wiki": "Supreme Court of India",
+   "style": "colour",
+   "for": "competition",
+   "also": [
+    "supreme court of india"
+   ]
+  },
+  "west indies": {
+   "wiki": "Cricket West Indies",
+   "style": "colour",
+   "for": "name",
+   "kind": "team",
+   "also": [
+    "windies",
+    "cricket west indies"
+   ]
+  },
+  "icc": {
+   "wiki": "International Cricket Council",
+   "style": "colour",
+   "for": "competition",
+   "also": [
+    "international cricket council",
+    "icc world cup",
+    "t20 world cup",
+    "champions trophy"
+   ]
   }
  },
  "no_face": [
@@ -528,5 +556,49 @@
   "shubman gill": "in",
   "jasprit bumrah": "in"
  },
- "$no_face": "People whose found photo turned out to be someone else or unusable; they keep their flag. The daily run adds to it after looking at new faces."
+ "$no_face": "People whose found photo turned out to be someone else or unusable; they keep their flag. The daily run adds to it after looking at new faces.",
+ "ipl": {
+  "$comment": "The IPL's own site: every team's icon (light and dark) and every player's current squad photo and country. Team number = the IPL's id for the team.",
+  "squads": "https://www.iplt20.com/api/bff/cms/teams/{slug}?tab=squad",
+  "icon": "https://www.iplt20.com/api/team-assets?pathname=static%2Fteams%2F{id}%2Ficon-{look}.svg&brand=ipl",
+  "teams": {
+   "chennai-super-kings": 1622,
+   "delhi-capitals": 1396,
+   "gujarat-titans": 2879,
+   "kolkata-knight-riders": 1873,
+   "lucknow-super-giants": 2880,
+   "mumbai-indians": 1854,
+   "punjab-kings": 2040,
+   "rajasthan-royals": 1558,
+   "royal-challengers-bengaluru": 2138,
+   "sunrisers-hyderabad": 1153
+  },
+  "aliases": {
+   "chennai-super-kings": [
+    "csk"
+   ],
+   "mumbai-indians": [],
+   "royal-challengers-bengaluru": [
+    "royal challengers bangalore",
+    "rcb"
+   ],
+   "kolkata-knight-riders": [
+    "kkr"
+   ],
+   "sunrisers-hyderabad": [
+    "srh"
+   ],
+   "rajasthan-royals": [],
+   "delhi-capitals": [
+    "delhi daredevils"
+   ],
+   "punjab-kings": [
+    "pbks"
+   ],
+   "gujarat-titans": [],
+   "lucknow-super-giants": [
+    "lsg"
+   ]
+  }
+ }
 }

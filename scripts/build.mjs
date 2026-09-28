@@ -109,13 +109,16 @@ for (const [key, e] of Object.entries(clean(C.own))) {
   if (!due(id, LIMIT.recheck_days.own) && keep(id)) { /* recently checked */ }
   else {
     let url = e.url;
-    if (e.wiki && !url) { const r = await get(`https://en.wikipedia.org/w/api.php?action=query&format=json&redirects=1&prop=pageimages&piprop=original&titles=${encodeURIComponent(e.wiki)}`);
-      url = r && Object.values((await r.json()).query?.pages || {})[0]?.original?.source;
-      // Wikipedia hides non-free logos from that list; then take the page's own file with "logo" in its name.
-      if (!url) { const q = await get(`https://en.wikipedia.org/w/api.php?action=query&format=json&redirects=1&prop=images&imlimit=50&titles=${encodeURIComponent(e.wiki)}`);
-        const f = q && Object.values((await q.json()).query?.pages || {})[0]?.images?.map(i => i.title).find(t => /logo/i.test(t) && !/commons-logo|wiki|flag|icon/i.test(t));
-        const ii = f && await get(`https://en.wikipedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url&titles=${encodeURIComponent(f)}`);
-        url = ii && Object.values((await ii.json()).query?.pages || {})[0]?.imageinfo?.[0]?.url; } }
+    // "wiki": the page's own file named "logo" or "emblem", or an SVG named after the page (never its lead photograph);
+    // a picture is fetched small
+    // (128 px), an SVG as it is.
+    if (e.wiki && !url) { const q = await get(`https://en.wikipedia.org/w/api.php?action=query&format=json&redirects=1&prop=images&imlimit=100&titles=${encodeURIComponent(e.wiki)}`);
+      const f = q && Object.values((await q.json()).query?.pages || {})[0]?.images?.map(i => i.title).filter(t => !/commons-logo|wikimedia|wiki|flag of|icon|current event/i.test(t))
+        .sort((a, b) => (/\b(logo|emblem)\b/i.test(b) - /\b(logo|emblem)\b/i.test(a)) || (/\d{4}\.svg$/.test(b) - /\d{4}\.svg$/.test(a))) // logo or emblem first, the newest dated one first
+        .find(t => /\b(logo|emblem)\b/i.test(t) || t.toLowerCase() === `file:${e.wiki.toLowerCase()}.svg`);
+      const ii = f && await get(`https://en.wikipedia.org/w/api.php?action=query&format=json&prop=imageinfo&iiprop=url&iiurlwidth=128&titles=${encodeURIComponent(f)}`);
+      const info = ii && Object.values((await ii.json()).query?.pages || {})[0]?.imageinfo?.[0];
+      url = info && (/\.svg$/i.test(info.url) ? info.url : info.thumburl || info.url); }
     const ext = e.ext || (String(url || OLD.marks[id]?.file || "").match(/\.(svg|png|webp|jpg)(\?|$)/i)?.[1] || "png").toLowerCase(), file = `${id}.${ext}`;
     let b = await save(url, file); if (!b) { missing.push(id); continue; }
     if (ext === "svg") { let s = b.toString(); if (e.crop) s = s.replace(/<svg\b[^>]*>/, t => t.replace(/\s(viewBox|width|height)="[^"]*"/g, "").replace(/>$/, ` viewBox="${e.crop}">`));
@@ -127,29 +130,62 @@ for (const [key, e] of Object.entries(clean(C.own))) {
   for (const n of [key, ...(e.also || [])]) (e.for === "competition" ? competitions : names)[fold(n)] = id;
 }
 
+// IPL: every team's own icon (light and dark background) and every player's current squad photo and country.
+const IPL = {};
+for (const [slug, tid] of Object.entries(clean(C.ipl?.teams))) {
+  const id = `teams/${slug}`, icon = look => C.ipl.icon.replace("{id}", tid).replace("{look}", look);
+  if (due(id, LIMIT.recheck_days.own) || !keep(id)) {
+    const lite = await save(icon("light"), `${id}.svg`), dark = await save(icon("dark"), `${id}-dark.svg`);
+    if (lite) put(id, { kind: "team", style: "colour", file: `${id}.svg`, ...(dark && !dark.equals(lite) ? { dark: `${id}-dark.svg` } : {}), name: slug.replace(/-/g, " "), from: "iplt20.com", licence: "trademark of its owner" });
+    else { missing.push(id); continue; } }
+  for (const n of [slug.replace(/-/g, " "), ...(C.ipl.aliases?.[slug] || [])]) names[fold(n)] = id;
+  const r = await get(C.ipl.squads.replace("{slug}", slug)), j = r ? await r.json() : null;
+  const walk = o => { if (!o || typeof o !== "object") return; if (Array.isArray(o)) return o.forEach(walk);
+    if (typeof o.name === "string" && /player%2F/.test(o.imageUrl || "") && o.countryCode) IPL[fold(o.name)] = { photo: o.imageUrl, flag: o.countryCode.toLowerCase(), name: o.name };
+    for (const v of Object.values(o)) walk(v); };
+  walk(j);
+}
+for (const [k, v] of Object.entries(IPL)) if (!(k in PEOPLE)) PEOPLE[k] = v.flag;
+// Seed people not yet in the people list are still looked up (face only until their flag is known).
+for (const s of PEOPLE_FILE.seed || []) if (!(fold(s) in PEOPLE)) PEOPLE[fold(s)] = "";
+console.log(`IPL: ${Object.keys(IPL).length} players`);
+
 // 4. People: a face (from 2025 on, centred on the face) for key people, else the flag they play under.
 const seed = new Set((PEOPLE_FILE.seed || []).map(fold)), hand = new Set(Object.keys(clean(C.people)).map(fold));
 const order = Object.keys(PEOPLE).sort((a, b) => (hand.has(fold(b)) + seed.has(fold(b))) - (hand.has(fold(a)) + seed.has(fold(a))));
 // "no_face": people whose found photo was wrong (a person checked it); they keep their flag.
 const noFace = new Set((C.no_face || []).map(fold));
-const faceWanted = order.filter(n => !noFace.has(fold(n)) && (process.env.FACES_ALL || hand.has(fold(n)) || seed.has(fold(n)))).slice(0, LIMIT.faces);
+// Key people: hand entries, the seed list, and IPL players who are Indian or already known from the markets.
+const key = n => hand.has(fold(n)) || seed.has(fold(n)) || (IPL[fold(n)] && (IPL[fold(n)].flag === "in" || fold(n) in PEOPLE_FILE.people));
+const faceWanted = Object.keys(PEOPLE).sort((a, b) => key(b) - key(a)).filter(n => !noFace.has(fold(n)) && (process.env.FACES_ALL || key(n))).slice(0, LIMIT.faces);
 const lookup = [];
-for (const person of faceWanted) { const id = `people/${slug(person)}`;
-  if (!due(id, OLD.marks[id]?.file ? LIMIT.recheck_days.faces : LIMIT.recheck_days.no_face)) { if (!keep(id)) marks[id] = OLD.marks[id]; continue; }
-  const r = await get(`https://site.web.api.espn.com/apis/common/v3/search?query=${encodeURIComponent(person)}&limit=5&type=player`);
+// A seed person who shares a name with an IPL player (the actor Shah Rukh Khan and the cricketer Shahrukh Khan) takes
+// the IPL photo only if Wikidata says they play cricket.
+const cricketer = async n => { const r = await get(`https://www.wikidata.org/w/api.php?action=wbsearchentities&format=json&language=en&type=item&limit=1&search=${encodeURIComponent(n)}`);
+  const h = r && (await r.json()).search?.[0]; if (!h) return false; const e = await get(`https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&props=claims&ids=${h.id}`);
+  const c = e && (await e.json()).entities?.[h.id]?.claims || {}; const ids = p => (c[p] || []).map(x => x.mainsnak?.datavalue?.value?.id);
+  return ids("P641").includes("Q5375") || ids("P106").includes("Q12299841"); };
+for (const [k, v] of Object.entries(IPL)) if (seed.has(k) && !(await cricketer(v.name))) delete IPL[k];
+for (const person of faceWanted) { const id = `people/${slug(person)}`, old = OLD.marks[id];
+  // Look again when a source now has them (the IPL) or the kept photo's date is impossible (in the future).
+  const again = old && ((old.style === "none" && IPL[fold(person)]) || (old.taken && Date.parse(old.taken) > Date.now()));
+  if (!again && !due(id, old?.file ? LIMIT.recheck_days.faces : LIMIT.recheck_days.no_face)) { if (!keep(id)) marks[id] = OLD.marks[id]; continue; }
+  const ipl = IPL[fold(person)];
+  const r = ipl ? null : await get(`https://site.web.api.espn.com/apis/common/v3/search?query=${encodeURIComponent(person)}&limit=5&type=player`);
   const hit = r && (await r.json()).items?.find(i => fold(i.displayName) === fold(person) && i.headshot?.href);
-  lookup.push({ key: person, name: person.replace(/\b\w/g, c => c.toUpperCase()), espn: hit?.headshot?.href || "" });
+  const seedName = (PEOPLE_FILE.seed || []).find(x => fold(x) === fold(person));
+  lookup.push({ key: person, name: ipl?.name || seedName || person.replace(/\b\w/g, c => c.toUpperCase()), espn: hit?.headshot?.href || "", ipl: ipl?.photo || "" });
 }
 console.log(`faces: looking up ${lookup.length} (limit ${LIMIT.faces})`);
 const found = await facesFor(lookup, m => console.log("  " + m));
 for (const p of lookup) { const id = `people/${slug(p.key)}`, file = `${id}.jpg`;
   if (found[p.key]) { mkdirSync("people", { recursive: true }); writeFileSync(file, found[p.key].jpg); const c = found[p.key].credit;
-    put(id, { kind: "person", style: "face", file, name: p.name, from: c ? c.page : "ESPN", licence: c ? `${c.licence}, ${c.author}` : "ESPN headshot", taken: c ? new Date(c.taken).toISOString().slice(0, 10) : undefined }); }
+    put(id, { kind: "person", style: "face", file, name: p.name, from: c ? c.page : found[p.key].source, licence: c ? `${c.licence}, ${c.author}` : `${found[p.key].source} headshot`, taken: c ? new Date(c.taken).toISOString().slice(0, 10) : undefined }); }
   else if (!keep(id)) marks[id] = { kind: "person", style: "none", file: "", checked: today }; // looked up, nothing clear from 2025 on
 }
 // Two forms of one name share a face: "andrea kimi antonelli" → "kimi antonelli", "alex albon" → "alexander albon".
 const faceOf = n => { const id = `people/${slug(n)}`; if (marks[id]?.file) return id; const f = fold(n), last = f.split(" ").pop();
-  const o = Object.keys(PEOPLE).map(fold).find(k => k !== f && marks[`people/${slug(k)}`]?.file && PEOPLE[k] === PEOPLE[n] && (f.endsWith(" " + k) || (k.split(" ").pop() === last && k.startsWith(f.split(" ")[0]))));
+  const o = Object.keys(PEOPLE).map(fold).find(k => k !== f && marks[`people/${slug(k)}`]?.file && PEOPLE[k] === PEOPLE[n] && (f.endsWith(" " + k) || (k.split(" ").pop() === last && k.split(" ").length === f.split(" ").length && k.startsWith(f.split(" ")[0]))));
   return o ? `people/${slug(o)}` : ""; };
 for (const [n, code] of Object.entries(PEOPLE)) { const id = faceOf(n) || `people/${slug(n)}`;
   names[fold(n)] = marks[id]?.file ? id : marks[`flags/${code}`] ? `flags/${code}` : undefined; if (!names[fold(n)]) delete names[fold(n)]; }

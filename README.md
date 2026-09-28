@@ -10,7 +10,7 @@ anything from anyone at run time. Made for [Andaaza](https://getandaaza.vercel.a
 |---|---|---|---|
 | `flags/` | every country and territory, round | colour SVG | ISO 3166 code: `in.svg`, `es.svg`; home nations `gb-eng.svg`, `gb-sct.svg`, `gb-wls.svg`, `gb-nir.svg` |
 | `clubs/` | football clubs (about 30 leagues and cups) and NBA teams | colour PNG, 64 px; `-dark` version for dark backgrounds where one exists | the club's own English name: `real-madrid.png`, `golden-state-warriors.png` |
-| `teams/` | IPL teams, the smaller F1 teams | colour, from Wikipedia | `chennai-super-kings.png`, `haas.svg` |
+| `teams/` | the ten IPL teams (their own icons, light and dark), Haas, Cricket West Indies | colour SVG | `chennai-super-kings.svg`, `haas.svg` |
 | `people/` | faces of key sportspeople and public figures | JPEG, 96 px square, centred on the face, **photo from 2025 or later** | the person's name: `max-verstappen.jpg` |
 | `brands/` | companies and products (AI labs, car makers, streaming, fintech, Polymarket, Kalshi, Manifold) | single-colour SVG in `currentColor` | the brand: `anthropic.svg`, `ferrari.svg` |
 | `competitions/` | tournaments and leagues (Champions League, F1, Wimbledon, IPL, LaLiga), plus oil, rupee, dollar | SVG or picture | the competition: `wimbledon.svg`, `f1.svg` |
@@ -86,16 +86,19 @@ The limits live in `config/sources.json` (`limits`), in plain words:
 - **By hand:** `npm install`, then `npm run names` (rarely: a new season, a World Cup; refreshes
   `config/people.json` from what people bet on), then `npm run build` (fetches what's missing or due; writes
   `index.json`).
-- **Daily (optional):** a Claude routine runs at 07:50 IST: `npm run missing` (reads what Andaaza shows, adds names that
-  have no mark, within the daily limit, and writes `missing-report.md` listing what it couldn't place) → `npm run build`
+- **Daily (optional):** a Claude routine runs at 07:50 IST: reads The House of 1400's page (read only) for names, then
+  `npm run missing` (Andaaza's names plus those, adds the ones that have no mark, within the daily limit, and writes `missing-report.md` listing what it couldn't place) → `npm run build`
   → checks new faces are the right people → commits here → refreshes Andaaza's copy. See `CLAUDE.md`. If the routine
   ever stops, nothing breaks: sites keep their copies; the library just stops growing.
 
 ## Faces
 
-A face must be a photo **taken in 2025 or later**: ESPN's headshot if ESPN updated it since, else the person's
-Wikipedia lead photo, else their newest cropped portrait on Wikimedia Commons, else any Commons photo with exactly one
-clear, large face. A small face detector (pico, MIT) finds the face; it must be the biggest clear face in the photo
+A face must be a photo **taken in 2025 or later**: ESPN's headshot if ESPN updated it since, or the IPL's current
+squad photo (every IPL player, Indian and overseas), else the person's Wikipedia lead photo, else their newest cropped
+portrait on Wikimedia Commons, else any Commons photo with exactly one clear, large face. **Each person gets a fixed
+budget: at most 8 photos tried and 45 seconds spent**, across all sources; then they keep their flag until the next
+recheck (180 days), so one hard case never holds a run up. A photo dated in the future is treated as a wrong date and
+skipped. A small face detector (pico, MIT) finds the face; it must be the biggest clear face in the photo
 (so a spectator is never picked) and the crop is centred on it. No such photo: no face (the flag stays).
 Wikimedia photos keep their author and licence in `index.json`; a site showing them should list them on a credits page.
 

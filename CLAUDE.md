@@ -15,8 +15,17 @@ and where gathering stops (limits in `config/sources.json`). Sites copy it; noth
 
 1. Make sure both repos are here: `thefirstparth/marks` and `thefirstparth/andaaza` (add and clone them if not).
    In `marks`: `npm ci`.
-2. `npm run missing`: reads Andaaza's current reading, adds names shown without a mark (people → config/people.json,
-   clubs → config/sources.json `crests.extra`), at most `daily_new`, and writes `missing-report.md`.
+2. **Read The House of 1400 too (read only, never edit it):** open https://house14.vercel.app, and list the proper names
+   a mark would help with: people, clubs, national sides, competitions, companies and brands in kickers, fixtures,
+   tables, standings, "The Market's View" and the Betting Window. One per line, as written, into `house-names.txt`
+   (skip ordinary words, headlines and places that are only locations).
+   Then `npm run missing -- --names house-names.txt`: reads Andaaza's current reading plus those names, adds the
+   ones without a mark (people → config/people.json, clubs → config/sources.json `crests.extra`), at most
+   `daily_new`, and writes `missing-report.md`. Ambiguous names (two people called the same) are never guessed.
+   For a **competition, company or brand** it lists as not placed: if its English Wikipedia page is certain, add an
+   `own` entry (`"wiki": "<exact page title>"`, `"style": "colour"`, `"for": "competition"` or `"name"`); if a free
+   icon set has it (Iconify search), add it to `brands`/`competitions`. After the build, look at each new logo: it
+   must be readable at 20 px (no sponsor wordmarks); otherwise remove the entry.
 3. `npm run build`: fetches the new marks and rechecks up to `daily_recheck` due ones (outdated crests, faces, logos).
 4. **Look at every face that is new or changed in this run** (compare `index.json` with the last commit: entries under
    `people/` whose `hash` changed). Make one contact sheet (the faces with their names) and view it. If a face is
